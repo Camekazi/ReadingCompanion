@@ -77,10 +77,15 @@ ReadingCompanion helps readers understand complex passages and track characters 
 - Navigation to BookDetailView
 
 **SettingsView.swift**
-- API key management (show/hide, save, remove)
-- SecureField for API key entry
-- Links to Anthropic docs and console
-- Version info + placeholder for export functionality
+- API key management with three states: no key (SecureField entry), existing key (show/hide toggle), save success alert
+- Show/Hide button toggles between masked (••••••••) and plaintext display
+- SecureField for API key entry with autocorrection disabled
+- Remove API Key button (destructive role) for existing keys
+- Links to Anthropic docs (https://docs.anthropic.com) and console (https://console.anthropic.com)
+- Version 1.0.0, Build 1
+- Placeholder for Export Library functionality (disabled)
+- Footer text explains Keychain security and local-only storage
+- OnAppear loads existing key state from KeychainService
 
 **ScanView.swift** (assumed)
 - Camera integration for capturing book passages

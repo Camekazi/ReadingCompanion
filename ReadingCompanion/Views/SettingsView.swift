@@ -16,7 +16,7 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Claude API Key") {
+                Section {
                     if hasExistingKey {
                         HStack {
                             if showingAPIKey {
@@ -48,11 +48,13 @@ struct SettingsView: View {
                         }
                         .disabled(apiKey.isEmpty)
                     }
+                } header: {
+                    Text("Claude API Key")
                 } footer: {
                     Text("Your API key is stored securely in the iOS Keychain and never leaves your device except to authenticate with Claude.")
                 }
 
-                Section("About") {
+                Section("About", content: {
                     LabeledContent("Version", value: "1.0.0")
                     LabeledContent("Build", value: "1")
 
@@ -63,14 +65,14 @@ struct SettingsView: View {
                     Link(destination: URL(string: "https://console.anthropic.com")!) {
                         Label("Get API Key", systemImage: "key")
                     }
-                }
+                })
 
-                Section("Data") {
+                Section("Data", content: {
                     NavigationLink(destination: Text("Coming soon")) {
                         Label("Export Library", systemImage: "square.and.arrow.up")
                     }
                     .disabled(true)
-                }
+                })
             }
             .navigationTitle("Settings")
             .onAppear {
