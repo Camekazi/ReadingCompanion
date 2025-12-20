@@ -74,7 +74,8 @@ class OpenLibraryService {
         }
     }
 
-    private func parseBookData(_ json: [String: Any]?, isbn: String) -> BookMetadata? {
+    /// Parse book data from ISBN API response (internal for testing)
+    func parseBookData(_ json: [String: Any]?, isbn: String) -> BookMetadata? {
         guard let json = json else { return nil }
 
         let title = json["title"] as? String ?? "Unknown"
@@ -109,7 +110,8 @@ class OpenLibraryService {
         )
     }
 
-    private func parseSearchResults(_ json: [String: Any]?) -> [BookMetadata] {
+    /// Parse search results from search API response (internal for testing)
+    func parseSearchResults(_ json: [String: Any]?) -> [BookMetadata] {
         guard let json = json,
               let docs = json["docs"] as? [[String: Any]] else {
             return []

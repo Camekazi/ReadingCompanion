@@ -31,11 +31,30 @@
 		SVC002 /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = SRC015; };
 		SVC003 /* OCRService.swift in Sources */ = {isa = PBXBuildFile; fileRef = SRC016; };
 		SVC004 /* OpenLibraryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = SRC017; };
+
+		/* Test Files */
+		TST001 /* BookTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TSRC001; };
+		TST002 /* PassageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TSRC002; };
+		TST003 /* KeychainServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TSRC003; };
+		TST004 /* ClaudeServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TSRC004; };
+		TST005 /* OpenLibraryServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TSRC005; };
+		TST006 /* MockSecureStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = TSRC006; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		PROXY001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = PRJ001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = TGT001;
+			remoteInfo = ReadingCompanion;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		/* Product */
 		PROD001 /* ReadingCompanion.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ReadingCompanion.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		PROD002 /* ReadingCompanionTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ReadingCompanionTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 
 		/* Source Files */
 		SRC001 /* ReadingCompanionApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadingCompanionApp.swift; sourceTree = "<group>"; };
@@ -56,12 +75,27 @@
 		SRC016 /* OCRService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OCRService.swift; sourceTree = "<group>"; };
 		SRC017 /* OpenLibraryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenLibraryService.swift; sourceTree = "<group>"; };
 
+		/* Test Files */
+		TSRC001 /* BookTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookTests.swift; sourceTree = "<group>"; };
+		TSRC002 /* PassageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassageTests.swift; sourceTree = "<group>"; };
+		TSRC003 /* KeychainServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainServiceTests.swift; sourceTree = "<group>"; };
+		TSRC004 /* ClaudeServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeServiceTests.swift; sourceTree = "<group>"; };
+		TSRC005 /* OpenLibraryServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenLibraryServiceTests.swift; sourceTree = "<group>"; };
+		TSRC006 /* MockSecureStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockSecureStorage.swift; sourceTree = "<group>"; };
+
 		/* Info.plist */
 		INFO001 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		FRMWK001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FRMWK002 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -75,6 +109,7 @@
 			isa = PBXGroup;
 			children = (
 				GRP001 /* ReadingCompanion */,
+				GRP007 /* ReadingCompanionTests */,
 				GRP002 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -96,6 +131,7 @@
 			isa = PBXGroup;
 			children = (
 				PROD001 /* ReadingCompanion.app */,
+				PROD002 /* ReadingCompanionTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -144,6 +180,27 @@
 			path = Utilities;
 			sourceTree = "<group>";
 		};
+		GRP007 /* ReadingCompanionTests */ = {
+			isa = PBXGroup;
+			children = (
+				TSRC001 /* BookTests.swift */,
+				TSRC002 /* PassageTests.swift */,
+				TSRC003 /* KeychainServiceTests.swift */,
+				TSRC004 /* ClaudeServiceTests.swift */,
+				TSRC005 /* OpenLibraryServiceTests.swift */,
+				GRP008 /* Mocks */,
+			);
+			path = ReadingCompanionTests;
+			sourceTree = "<group>";
+		};
+		GRP008 /* Mocks */ = {
+			isa = PBXGroup;
+			children = (
+				TSRC006 /* MockSecureStorage.swift */,
+			);
+			path = Mocks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -164,6 +221,24 @@
 			productReference = PROD001 /* ReadingCompanion.app */;
 			productType = "com.apple.product-type.application";
 		};
+		TGT002 /* ReadingCompanionTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CFG003 /* Build configuration list for PBXNativeTarget "ReadingCompanionTests" */;
+			buildPhases = (
+				TST_SRC_PHASE /* Sources */,
+				FRMWK002 /* Frameworks */,
+				RES002 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				DEP001 /* PBXTargetDependency */,
+			);
+			name = ReadingCompanionTests;
+			productName = ReadingCompanionTests;
+			productReference = PROD002 /* ReadingCompanionTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -176,6 +251,10 @@
 				TargetAttributes = {
 					TGT001 = {
 						CreatedOnToolsVersion = 15.0;
+					};
+					TGT002 = {
+						CreatedOnToolsVersion = 15.0;
+						TestTargetID = TGT001;
 					};
 				};
 			};
@@ -193,12 +272,20 @@
 			projectRoot = "";
 			targets = (
 				TGT001 /* ReadingCompanion */,
+				TGT002 /* ReadingCompanionTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		RES001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		RES002 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -232,7 +319,28 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		TST_SRC_PHASE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				TST001 /* BookTests.swift in Sources */,
+				TST002 /* PassageTests.swift in Sources */,
+				TST003 /* KeychainServiceTests.swift in Sources */,
+				TST004 /* ClaudeServiceTests.swift in Sources */,
+				TST005 /* OpenLibraryServiceTests.swift in Sources */,
+				TST006 /* MockSecureStorage.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		DEP001 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = TGT001 /* ReadingCompanion */;
+			targetProxy = PROXY001 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		DBGCFG001 /* Debug */ = {
@@ -414,6 +522,44 @@
 			};
 			name = Release;
 		};
+		TSTDBGCFG /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.ReadingCompanionTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ReadingCompanion.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ReadingCompanion";
+			};
+			name = Debug;
+		};
+		TSTRELCFG /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.ReadingCompanionTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ReadingCompanion.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ReadingCompanion";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -431,6 +577,15 @@
 			buildConfigurations = (
 				DBGCFG001 /* Debug */,
 				RELCFG001 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CFG003 /* Build configuration list for PBXNativeTarget "ReadingCompanionTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				TSTDBGCFG /* Debug */,
+				TSTRELCFG /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

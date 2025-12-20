@@ -8,7 +8,19 @@
 import Foundation
 import Security
 
-class KeychainService {
+// MARK: - SecureStorage Protocol
+
+/// Protocol for secure storage operations, enabling testability via dependency injection.
+protocol SecureStorage {
+    func saveAPIKey(_ apiKey: String) -> Bool
+    func getAPIKey() -> String?
+    func deleteAPIKey() -> Bool
+    var hasAPIKey: Bool { get }
+}
+
+// MARK: - KeychainService
+
+class KeychainService: SecureStorage {
     static let shared = KeychainService()
 
     private let serviceKey = "com.readingcompanion.apikey"
