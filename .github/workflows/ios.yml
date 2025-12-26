@@ -28,7 +28,7 @@ jobs:
           xcodebuild build-for-testing \
             -project ReadingCompanion.xcodeproj \
             -scheme ReadingCompanion \
-            -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.1' \
+            -destination 'platform=iOS Simulator,name=iPhone 16 Pro' \
             -quiet
 
       - name: Run tests
@@ -36,7 +36,7 @@ jobs:
           xcodebuild test-without-building \
             -project ReadingCompanion.xcodeproj \
             -scheme ReadingCompanion \
-            -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.1' \
+            -destination 'platform=iOS Simulator,name=iPhone 16 Pro' \
             -resultBundlePath TestResults.xcresult
 
       - name: Upload test results
