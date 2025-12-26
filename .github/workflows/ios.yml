@@ -20,6 +20,9 @@ jobs:
       - name: Show Xcode version
         run: xcodebuild -version
 
+      - name: Download iOS Simulator runtime
+        run: xcodebuild -downloadPlatform iOS
+
       - name: List available simulators
         run: xcrun simctl list devices available | grep iPhone | head -5
 
