@@ -11,10 +11,18 @@
 		APP002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SRC002 /* ContentView.swift */; };
 		MOD001 /* Book.swift in Sources */ = {isa = PBXBuildFile; fileRef = SRC003 /* Book.swift */; };
 		MOD002 /* Passage.swift in Sources */ = {isa = PBXBuildFile; fileRef = SRC004 /* Passage.swift */; };
+		MOD003 /* ReadingSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = SRC023 /* ReadingSession.swift */; };
+		MOD004 /* VocabularyWord.swift in Sources */ = {isa = PBXBuildFile; fileRef = SRC024 /* VocabularyWord.swift */; };
 		SVC001 /* ClaudeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = SRC014 /* ClaudeService.swift */; };
 		SVC002 /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = SRC015 /* KeychainService.swift */; };
 		SVC003 /* OCRService.swift in Sources */ = {isa = PBXBuildFile; fileRef = SRC016 /* OCRService.swift */; };
 		SVC004 /* OpenLibraryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = SRC017 /* OpenLibraryService.swift */; };
+		SVC005 /* LibriVoxService.swift in Sources */ = {isa = PBXBuildFile; fileRef = SRC018 /* LibriVoxService.swift */; };
+		SVC006 /* EPUBService.swift in Sources */ = {isa = PBXBuildFile; fileRef = SRC019 /* EPUBService.swift */; };
+		SVC007 /* ImportExportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = SRC021 /* ImportExportService.swift */; };
+		VW011 /* DocumentPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SRC022 /* DocumentPickerView.swift */; };
+		VW012 /* StatisticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SRC025 /* StatisticsView.swift */; };
+		VW013 /* VocabularyListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SRC026 /* VocabularyListView.swift */; };
 		TST001 /* BookTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TSRC001 /* BookTests.swift */; };
 		TST002 /* PassageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TSRC002 /* PassageTests.swift */; };
 		TST003 /* KeychainServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TSRC003 /* KeychainServiceTests.swift */; };
@@ -30,6 +38,7 @@
 		VW007 /* CharacterQueryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SRC011 /* CharacterQueryView.swift */; };
 		VW008 /* PassageDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SRC012 /* PassageDetailView.swift */; };
 		VW009 /* ISBNScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SRC013 /* ISBNScannerView.swift */; };
+		VW010 /* FreeBookSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SRC020 /* FreeBookSearchView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,16 +68,26 @@
 		SRC011 /* CharacterQueryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterQueryView.swift; sourceTree = "<group>"; };
 		SRC012 /* PassageDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassageDetailView.swift; sourceTree = "<group>"; };
 		SRC013 /* ISBNScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ISBNScannerView.swift; sourceTree = "<group>"; };
+		SRC020 /* FreeBookSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreeBookSearchView.swift; sourceTree = "<group>"; };
 		SRC014 /* ClaudeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeService.swift; sourceTree = "<group>"; };
 		SRC015 /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
 		SRC016 /* OCRService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OCRService.swift; sourceTree = "<group>"; };
 		SRC017 /* OpenLibraryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenLibraryService.swift; sourceTree = "<group>"; };
+		SRC018 /* LibriVoxService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibriVoxService.swift; sourceTree = "<group>"; };
+		SRC019 /* EPUBService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EPUBService.swift; sourceTree = "<group>"; };
 		TSRC001 /* BookTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookTests.swift; sourceTree = "<group>"; };
 		TSRC002 /* PassageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassageTests.swift; sourceTree = "<group>"; };
 		TSRC003 /* KeychainServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainServiceTests.swift; sourceTree = "<group>"; };
 		TSRC004 /* ClaudeServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeServiceTests.swift; sourceTree = "<group>"; };
 		TSRC005 /* OpenLibraryServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenLibraryServiceTests.swift; sourceTree = "<group>"; };
 		TSRC006 /* MockSecureStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockSecureStorage.swift; sourceTree = "<group>"; };
+		SRC021 /* ImportExportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportExportService.swift; sourceTree = "<group>"; };
+		SRC022 /* DocumentPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentPickerView.swift; sourceTree = "<group>"; };
+		ENT001 /* ReadingCompanion.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ReadingCompanion.entitlements; sourceTree = "<group>"; };
+		SRC023 /* ReadingSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadingSession.swift; sourceTree = "<group>"; };
+		SRC024 /* VocabularyWord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VocabularyWord.swift; sourceTree = "<group>"; };
+		SRC025 /* StatisticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsView.swift; sourceTree = "<group>"; };
+		SRC026 /* VocabularyListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VocabularyListView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,6 +117,7 @@
 				GRP005 /* Services */,
 				GRP006 /* Utilities */,
 				INFO001 /* Info.plist */,
+				ENT001 /* ReadingCompanion.entitlements */,
 			);
 			path = ReadingCompanion;
 			sourceTree = "<group>";
@@ -116,6 +136,8 @@
 			children = (
 				SRC003 /* Book.swift */,
 				SRC004 /* Passage.swift */,
+				SRC023 /* ReadingSession.swift */,
+				SRC024 /* VocabularyWord.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -133,6 +155,10 @@
 				SRC011 /* CharacterQueryView.swift */,
 				SRC012 /* PassageDetailView.swift */,
 				SRC013 /* ISBNScannerView.swift */,
+				SRC020 /* FreeBookSearchView.swift */,
+				SRC022 /* DocumentPickerView.swift */,
+				SRC025 /* StatisticsView.swift */,
+				SRC026 /* VocabularyListView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -144,6 +170,9 @@
 				SRC015 /* KeychainService.swift */,
 				SRC016 /* OCRService.swift */,
 				SRC017 /* OpenLibraryService.swift */,
+				SRC018 /* LibriVoxService.swift */,
+				SRC019 /* EPUBService.swift */,
+				SRC021 /* ImportExportService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -287,6 +316,8 @@
 				APP002 /* ContentView.swift in Sources */,
 				MOD001 /* Book.swift in Sources */,
 				MOD002 /* Passage.swift in Sources */,
+				MOD003 /* ReadingSession.swift in Sources */,
+				MOD004 /* VocabularyWord.swift in Sources */,
 				VW001 /* LibraryView.swift in Sources */,
 				VW002 /* AddBookView.swift in Sources */,
 				VW003 /* BookDetailView.swift in Sources */,
@@ -296,10 +327,17 @@
 				VW007 /* CharacterQueryView.swift in Sources */,
 				VW008 /* PassageDetailView.swift in Sources */,
 				VW009 /* ISBNScannerView.swift in Sources */,
+				VW010 /* FreeBookSearchView.swift in Sources */,
 				SVC001 /* ClaudeService.swift in Sources */,
 				SVC002 /* KeychainService.swift in Sources */,
 				SVC003 /* OCRService.swift in Sources */,
 				SVC004 /* OpenLibraryService.swift in Sources */,
+				SVC005 /* LibriVoxService.swift in Sources */,
+				SVC006 /* EPUBService.swift in Sources */,
+				SVC007 /* ImportExportService.swift in Sources */,
+				VW011 /* DocumentPickerView.swift in Sources */,
+				VW012 /* StatisticsView.swift in Sources */,
+				VW013 /* VocabularyListView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -453,6 +491,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = ReadingCompanion/ReadingCompanion.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 37STD6QW97;
@@ -483,6 +522,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = ReadingCompanion/ReadingCompanion.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 37STD6QW97;

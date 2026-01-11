@@ -7,6 +7,21 @@
 
 import Foundation
 
+/// Represents a source where a book is freely available online
+struct FreeBookSource: Identifiable {
+    let id = UUID()
+    let name: String
+    let url: URL
+    let type: SourceType
+
+    enum SourceType: String {
+        case openLibrary = "Open Library"
+        case internetArchive = "Internet Archive"
+        case projectGutenberg = "Project Gutenberg"
+        case standardEbooks = "Standard Ebooks"
+    }
+}
+
 /// Book metadata from OpenLibrary
 struct BookMetadata {
     let title: String
@@ -14,6 +29,44 @@ struct BookMetadata {
     let pageCount: Int?
     let publishYear: Int?
     let coverURL: URL?
+
+    // Free book availability
+    let hasFullText: Bool
+    let internetArchiveIds: [String]
+    let workKey: String?
+
+    /// URLs where this book can be read for free
+    var freeBookSources: [FreeBookSource] {
+        var sources: [FreeBookSource] = []
+
+        // Internet Archive sources
+        for iaId in internetArchiveIds {
+            if let url = URL(string: "https://archive.org/details/\(iaId)") {
+                sources.append(FreeBookSource(
+                    name: "Internet Archive",
+                    url: url,
+                    type: .internetArchive
+                ))
+            }
+        }
+
+        // Open Library reading page
+        if hasFullText, let workKey = workKey,
+           let url = URL(string: "https://openlibrary.org\(workKey)") {
+            sources.append(FreeBookSource(
+                name: "Open Library",
+                url: url,
+                type: .openLibrary
+            ))
+        }
+
+        return sources
+    }
+
+    /// Whether any free version is available
+    var hasFreeVersion: Bool {
+        hasFullText || !internetArchiveIds.isEmpty
+    }
 }
 
 /// Service for fetching book data from OpenLibrary
@@ -74,6 +127,31 @@ class OpenLibraryService {
         }
     }
 
+    /// Search for FREE books only (has_fulltext=true filter)
+    func searchFreeBooks(query: String, limit: Int = 20) async throws -> [BookMetadata] {
+        guard let encodedQuery = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
+            return []
+        }
+
+        let urlString = "\(baseURL)/search.json?q=\(encodedQuery)&has_fulltext=true&limit=\(limit)"
+        guard let url = URL(string: urlString) else { return [] }
+
+        do {
+            let (data, response) = try await URLSession.shared.data(from: url)
+
+            guard let httpResponse = response as? HTTPURLResponse,
+                  httpResponse.statusCode == 200 else {
+                return []
+            }
+
+            let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
+            return parseSearchResults(json)
+        } catch {
+            print("OpenLibrary search error: \(error)")
+            return []
+        }
+    }
+
     /// Parse book data from ISBN API response (internal for testing)
     func parseBookData(_ json: [String: Any]?, isbn: String) -> BookMetadata? {
         guard let json = json else { return nil }
@@ -101,12 +179,21 @@ class OpenLibraryService {
             coverURL = URL(string: "https://covers.openlibrary.org/b/isbn/\(isbn)-M.jpg")
         }
 
+        // Work key for linking to Open Library page
+        let workKey = (json["works"] as? [[String: Any]])?.first?["key"] as? String
+
+        // Internet Archive IDs (if available)
+        let iaIds = json["ia_box_id"] as? [String] ?? []
+
         return BookMetadata(
             title: title,
             author: author,
             pageCount: pageCount,
             publishYear: nil,
-            coverURL: coverURL
+            coverURL: coverURL,
+            hasFullText: false,  // ISBN lookup doesn't include this
+            internetArchiveIds: iaIds,
+            workKey: workKey
         )
     }
 
@@ -129,13 +216,76 @@ class OpenLibraryService {
                 coverURL = URL(string: "https://covers.openlibrary.org/b/id/\(coverId)-M.jpg")
             }
 
+            // Free book availability
+            let hasFullText = doc["has_fulltext"] as? Bool ?? false
+            let internetArchiveIds = doc["ia"] as? [String] ?? []
+            let workKey = doc["key"] as? String
+
             return BookMetadata(
                 title: title,
                 author: author,
                 pageCount: pageCount,
                 publishYear: publishYear,
-                coverURL: coverURL
+                coverURL: coverURL,
+                hasFullText: hasFullText,
+                internetArchiveIds: internetArchiveIds,
+                workKey: workKey
             )
         }
+    }
+
+    /// Check for free versions from additional sources (Project Gutenberg, Standard Ebooks)
+    func checkAdditionalFreeSources(title: String, author: String?) async -> [FreeBookSource] {
+        var sources: [FreeBookSource] = []
+
+        // Check Project Gutenberg
+        if let gutenbergSource = await checkProjectGutenberg(title: title, author: author) {
+            sources.append(gutenbergSource)
+        }
+
+        // Check Standard Ebooks
+        if let standardSource = await checkStandardEbooks(title: title, author: author) {
+            sources.append(standardSource)
+        }
+
+        return sources
+    }
+
+    /// Search Project Gutenberg for free book
+    private func checkProjectGutenberg(title: String, author: String?) async -> FreeBookSource? {
+        // Project Gutenberg search URL
+        var searchTerms = title
+        if let author = author {
+            searchTerms += " \(author)"
+        }
+
+        guard let encoded = searchTerms.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
+              let searchURL = URL(string: "https://www.gutenberg.org/ebooks/search/?query=\(encoded)") else {
+            return nil
+        }
+
+        // For now, return a search link - full API integration would require parsing HTML
+        // Project Gutenberg doesn't have a JSON API, so we provide a search link
+        return FreeBookSource(
+            name: "Search Project Gutenberg",
+            url: searchURL,
+            type: .projectGutenberg
+        )
+    }
+
+    /// Search Standard Ebooks for free book
+    private func checkStandardEbooks(title: String, author: String?) async -> FreeBookSource? {
+        // Standard Ebooks uses a simple URL structure
+        guard let encoded = title.lowercased()
+            .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
+              let searchURL = URL(string: "https://standardebooks.org/ebooks?query=\(encoded)") else {
+            return nil
+        }
+
+        return FreeBookSource(
+            name: "Search Standard Ebooks",
+            url: searchURL,
+            type: .standardEbooks
+        )
     }
 }

@@ -57,9 +57,15 @@ struct CharacterQueryView: View {
                     .font(.headline)
             }
 
-            Text("Responses are based only on the \(book.passages.count) passages you've scanned up to page \(book.currentPage). No information beyond your current reading position will be revealed.")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+            if book.hasDownloadedContent {
+                Text("Responses are based on downloaded book text up to Chapter \((book.currentChapter ?? 0) + 1). No information beyond your current chapter will be revealed.")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            } else {
+                Text("Responses are based only on the \(book.passages.count) passages you've scanned up to page \(book.currentPage). No information beyond your current reading position will be revealed.")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
         }
         .padding()
         .background(Color.green.opacity(0.1))
@@ -133,14 +139,17 @@ struct CharacterQueryView: View {
 
         Task {
             do {
-                // Get passages up to current page
-                let passageTexts = book.passagesUpToCurrentPage.map { $0.text }
+                // Get context from downloaded content or scanned passages
+                let context = book.characterQueryContext
+                let position = book.hasDownloadedContent
+                    ? "Chapter \((book.currentChapter ?? 0) + 1)"
+                    : "Page \(book.currentPage)"
 
-                let result = try await ClaudeService.shared.queryCharacter(
+                let result = try await ClaudeService.shared.queryCharacterWithContext(
                     name: characterName,
                     bookTitle: book.title,
-                    currentPage: book.currentPage,
-                    passages: passageTexts
+                    position: position,
+                    context: context
                 )
 
                 await MainActor.run {

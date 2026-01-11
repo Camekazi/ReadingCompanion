@@ -16,6 +16,7 @@ struct ScanView: View {
     @State private var capturedImage: UIImage?
     @State private var ocrText = ""
     @State private var aiExplanation = ""
+    @State private var extractedVocabulary: [ExtractedVocabulary] = []
     @State private var isProcessingOCR = false
     @State private var isLoadingAI = false
     @State private var errorMessage: String?
@@ -23,6 +24,8 @@ struct ScanView: View {
     @State private var pageNumber = ""
     @State private var showingCamera = false
     @State private var showingSaveConfirmation = false
+    @State private var showingAddBook = false
+    @State private var bookCountBeforeAdd = 0
 
     var body: some View {
         NavigationStack {
@@ -66,6 +69,16 @@ struct ScanView: View {
                 Button("Cancel", role: .cancel) {}
             } message: {
                 Text("Save this passage to your library?")
+            }
+            .sheet(isPresented: $showingAddBook) {
+                AddBookView()
+            }
+            .onChange(of: showingAddBook) { wasShowing, isShowing in
+                // When AddBook sheet closes and a new book was added, auto-select it
+                if wasShowing && !isShowing && books.count > bookCountBeforeAdd {
+                    // Find the most recently added book
+                    selectedBook = books.max(by: { $0.dateAdded < $1.dateAdded })
+                }
             }
         }
     }
@@ -128,13 +141,41 @@ struct ScanView: View {
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
 
-                Picker("Book", selection: $selectedBook) {
-                    Text("None").tag(nil as Book?)
-                    ForEach(books) { book in
-                        Text(book.title).tag(book as Book?)
+                Menu {
+                    Button("None") {
+                        selectedBook = nil
                     }
+
+                    if !books.isEmpty {
+                        Divider()
+                        ForEach(books) { book in
+                            Button(book.title) {
+                                selectedBook = book
+                            }
+                        }
+                    }
+
+                    Divider()
+
+                    Button {
+                        bookCountBeforeAdd = books.count
+                        showingAddBook = true
+                    } label: {
+                        Label("New Book...", systemImage: "plus")
+                    }
+                } label: {
+                    HStack {
+                        Text(selectedBook?.title ?? "Select a book")
+                            .foregroundStyle(selectedBook == nil ? .secondary : .primary)
+                        Spacer()
+                        Image(systemName: "chevron.up.chevron.down")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    .padding(10)
+                    .background(Color(.systemGray6))
+                    .cornerRadius(8)
                 }
-                .pickerStyle(.menu)
 
                 if selectedBook != nil {
                     TextField("Page number", text: $pageNumber)
@@ -220,14 +261,16 @@ struct ScanView: View {
 
         isLoadingAI = true
         errorMessage = nil
+        extractedVocabulary = []
 
         do {
-            let explanation = try await ClaudeService.shared.explainPassage(
+            let result = try await ClaudeService.shared.explainPassageWithVocabulary(
                 ocrText,
                 bookTitle: selectedBook?.title
             )
             await MainActor.run {
-                aiExplanation = explanation
+                aiExplanation = result.explanation
+                extractedVocabulary = result.vocabulary
                 isLoadingAI = false
             }
         } catch {
@@ -250,10 +293,29 @@ struct ScanView: View {
 
         modelContext.insert(passage)
 
+        // Save vocabulary words if any were extracted
+        for extracted in extractedVocabulary {
+            let vocabWord = VocabularyWord(
+                word: extracted.word,
+                definition: extracted.definition,
+                context: extracted.context,
+                partOfSpeech: extracted.partOfSpeech,
+                book: book,
+                passage: passage
+            )
+            modelContext.insert(vocabWord)
+        }
+
         // Update book's current page if provided
         if let page = Int(pageNumber), page > book.currentPage {
             book.currentPage = page
             book.dateLastRead = Date()
+        }
+
+        // Mark book for sync and auto-export to iCloud
+        book.needsSync = true
+        Task {
+            try? ImportExportService.shared.exportBookToICloud(book)
         }
 
         // Reset for next scan
@@ -264,6 +326,7 @@ struct ScanView: View {
         capturedImage = nil
         ocrText = ""
         aiExplanation = ""
+        extractedVocabulary = []
         pageNumber = ""
         errorMessage = nil
     }
@@ -271,5 +334,5 @@ struct ScanView: View {
 
 #Preview {
     ScanView()
-        .modelContainer(for: [Book.self, Passage.self], inMemory: true)
+        .modelContainer(for: [Book.self, Passage.self, ReadingSession.self, VocabularyWord.self], inMemory: true)
 }

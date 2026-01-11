@@ -13,6 +13,7 @@ struct LibraryView: View {
     @Query(sort: \Book.dateAdded, order: .reverse) private var books: [Book]
 
     @State private var showingAddBook = false
+    @State private var showingFreeBookSearch = false
     @State private var searchText = ""
 
     var filteredBooks: [Book] {
@@ -38,13 +39,24 @@ struct LibraryView: View {
             .searchable(text: $searchText, prompt: "Search books")
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
-                    Button(action: { showingAddBook = true }) {
-                        Image(systemName: "plus")
+                    Menu {
+                        Button(action: { showingFreeBookSearch = true }) {
+                            Label("Find Free Books", systemImage: "globe")
+                        }
+                        Button(action: { showingAddBook = true }) {
+                            Label("Add Book Manually", systemImage: "plus")
+                        }
+                    } label: {
+                        Image(systemName: "plus.circle.fill")
+                            .font(.title2)
                     }
                 }
             }
             .sheet(isPresented: $showingAddBook) {
                 AddBookView()
+            }
+            .sheet(isPresented: $showingFreeBookSearch) {
+                FreeBookSearchView()
             }
         }
     }
@@ -53,12 +65,19 @@ struct LibraryView: View {
         ContentUnavailableView {
             Label("No Books Yet", systemImage: "books.vertical")
         } description: {
-            Text("Add your first book to start tracking your reading.")
+            Text("Add a book to start tracking your reading and unlock AI-powered character insights.")
         } actions: {
-            Button("Add Book") {
-                showingAddBook = true
+            VStack(spacing: 12) {
+                Button(action: { showingFreeBookSearch = true }) {
+                    Label("Find Free Books", systemImage: "globe")
+                }
+                .buttonStyle(.borderedProminent)
+
+                Button(action: { showingAddBook = true }) {
+                    Label("Add Manually", systemImage: "plus")
+                }
+                .buttonStyle(.bordered)
             }
-            .buttonStyle(.borderedProminent)
         }
     }
 
@@ -75,7 +94,12 @@ struct LibraryView: View {
 
     private func deleteBooks(at offsets: IndexSet) {
         for index in offsets {
-            modelContext.delete(filteredBooks[index])
+            let book = filteredBooks[index]
+            // Delete exported file (CRUD completeness)
+            ImportExportService.shared.deleteExportedFile(for: book)
+            // Remove from Spotlight index
+            SpotlightService.shared.removeBook(book)
+            modelContext.delete(book)
         }
     }
 }
@@ -84,9 +108,34 @@ struct BookRowView: View {
     let book: Book
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(book.title)
-                .font(.headline)
+        VStack(alignment: .leading, spacing: 6) {
+            // Title row with status badges
+            HStack(alignment: .center, spacing: 8) {
+                Text(book.title)
+                    .font(.headline)
+                    .lineLimit(2)
+
+                Spacer()
+
+                // Status badges
+                HStack(spacing: 4) {
+                    if book.hasDownloadedContent {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.caption)
+                            .foregroundStyle(.green)
+                    } else if book.internetArchiveId != nil {
+                        Image(systemName: "arrow.down.circle")
+                            .font(.caption)
+                            .foregroundStyle(.blue)
+                    }
+
+                    if book.hasAudiobook {
+                        Image(systemName: "headphones")
+                            .font(.caption)
+                            .foregroundStyle(.purple)
+                    }
+                }
+            }
 
             if let author = book.author, !author.isEmpty {
                 Text(author)
@@ -94,19 +143,37 @@ struct BookRowView: View {
                     .foregroundStyle(.secondary)
             }
 
-            HStack {
+            // Progress bar and stats
+            HStack(spacing: 12) {
+                // Visual progress indicator
+                if let total = book.totalPages, total > 0 {
+                    ProgressView(value: Double(book.currentPage), total: Double(total))
+                        .tint(progressColor)
+                        .frame(width: 60)
+                }
+
                 Text(book.progressDescription)
                     .font(.caption)
-                    .foregroundStyle(.tertiary)
+                    .foregroundStyle(.secondary)
 
                 Spacer()
 
-                Text("\(book.passages.count) passages")
-                    .font(.caption)
-                    .foregroundStyle(.tertiary)
+                if book.passages.count > 0 {
+                    Label("\(book.passages.count)", systemImage: "doc.text")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
             }
         }
         .padding(.vertical, 4)
+    }
+
+    private var progressColor: Color {
+        guard let total = book.totalPages, total > 0 else { return .blue }
+        let progress = Double(book.currentPage) / Double(total)
+        if progress >= 1.0 { return .green }
+        if progress >= 0.5 { return .blue }
+        return .orange
     }
 }
 

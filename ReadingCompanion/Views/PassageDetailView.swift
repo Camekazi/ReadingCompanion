@@ -6,11 +6,14 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct PassageDetailView: View {
+    @Environment(\.modelContext) private var modelContext
     @Bindable var passage: Passage
     @State private var isLoadingAI = false
     @State private var errorMessage: String?
+    @State private var extractedWordCount = 0
 
     var body: some View {
         ScrollView {
@@ -87,6 +90,47 @@ struct PassageDetailView: View {
                             .background(Color(.systemGray6))
                             .cornerRadius(8)
                     }
+
+                    // Show vocabulary extraction result
+                    if extractedWordCount > 0 {
+                        HStack {
+                            Image(systemName: "text.book.closed")
+                                .foregroundStyle(.green)
+                            Text("\(extractedWordCount) vocabulary word\(extractedWordCount == 1 ? "" : "s") saved")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+
+                // Vocabulary words for this passage
+                if !passage.vocabularyWords.isEmpty {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Vocabulary")
+                            .font(.headline)
+
+                        ForEach(passage.vocabularyWords, id: \.id) { word in
+                            VStack(alignment: .leading, spacing: 4) {
+                                HStack {
+                                    Text(word.word)
+                                        .font(.subheadline)
+                                        .fontWeight(.medium)
+                                    if let pos = word.formattedPartOfSpeech {
+                                        Text(pos)
+                                            .font(.caption)
+                                            .foregroundStyle(.secondary)
+                                    }
+                                }
+                                Text(word.definition)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            .padding(.vertical, 4)
+                        }
+                    }
+                    .padding()
+                    .background(Color.purple.opacity(0.1))
+                    .cornerRadius(8)
                 }
 
                 // User notes (future feature placeholder)
@@ -127,16 +171,40 @@ struct PassageDetailView: View {
     private func generateSummary() async {
         isLoadingAI = true
         errorMessage = nil
+        extractedWordCount = 0
 
         do {
-            let explanation = try await ClaudeService.shared.explainPassage(
+            let result = try await ClaudeService.shared.explainPassageWithVocabulary(
                 passage.text,
                 bookTitle: passage.book?.title
             )
 
             await MainActor.run {
-                passage.aiSummary = explanation
+                passage.aiSummary = result.explanation
+
+                // Save vocabulary words
+                for extracted in result.vocabulary {
+                    let vocabWord = VocabularyWord(
+                        word: extracted.word,
+                        definition: extracted.definition,
+                        context: extracted.context,
+                        partOfSpeech: extracted.partOfSpeech,
+                        book: passage.book,
+                        passage: passage
+                    )
+                    modelContext.insert(vocabWord)
+                }
+
+                extractedWordCount = result.vocabulary.count
                 isLoadingAI = false
+
+                // Auto-export book to iCloud
+                if let book = passage.book {
+                    book.needsSync = true
+                    Task {
+                        try? ImportExportService.shared.exportBookToICloud(book)
+                    }
+                }
             }
         } catch {
             await MainActor.run {
@@ -154,4 +222,5 @@ struct PassageDetailView: View {
             pageNumber: 1
         ))
     }
+    .modelContainer(for: [Book.self, Passage.self, ReadingSession.self, VocabularyWord.self], inMemory: true)
 }

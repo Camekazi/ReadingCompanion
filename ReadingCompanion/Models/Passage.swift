@@ -19,6 +19,9 @@ final class Passage {
 
     var book: Book?
 
+    @Relationship(deleteRule: .nullify, inverse: \VocabularyWord.passage)
+    var vocabularyWords: [VocabularyWord] = []
+
     init(
         id: UUID = UUID(),
         text: String,
